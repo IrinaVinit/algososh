@@ -9,6 +9,10 @@
     width: 377px;
 }
 
-.button {
-
+.circle_container{
+    margin-top: 120px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
 }
