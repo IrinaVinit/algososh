@@ -6,16 +6,27 @@ import styles from "./string.module.css";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
+// import { visualise } from "./utils";
 
-type ReverseElement= {
+export type ReverseElement= {
   item: string,
   state: ElementStates
+}
+
+type ActiveElement = {
+  loading: boolean;
+  disaibled: boolean;
+}
+
+const initialStateActiveElement = {
+  loading: false,
+  disaibled: false
 }
 
 export const StringComponent: React.FC = () => {
   const [value, setValue] = useState<string>("");
   const [isReverseArr, setReverseArr] = useState<ReverseElement[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<ActiveElement>(initialStateActiveElement);
 
   const onClick = () => {
     visualise(value);
@@ -62,14 +73,14 @@ async function changeElements (arr:ReverseElement[], start: number, end: number)
 }
 
 async function visualise (str: string) {
-    setIsLoading(true);
+    setIsLoading({loading: true, disaibled: true});
     const arr = getArray(str);
     let start = 0;
     let end = arr.length -1;
     setReverseArr(arr);
     setValue("");
     await changeElements(arr, start, end);
-    setIsLoading(false);
+    setIsLoading(initialStateActiveElement);
 }
 
   return (
@@ -81,15 +92,15 @@ async function visualise (str: string) {
           maxLength={11}
           value={value}
           onChange={onChange}
+          disabled={isLoading.disaibled}
         />
         <Button 
         type="button"
         onClick={onClick}
         extraClass={styles.button} 
         text="Развернуть" 
-        isLoader={isLoading}
+        isLoader={isLoading.loading}
         disabled={!value}
-        // isLoader={value.length != 0 && isLoading === false ? false : true } 
         />
       </div>
       <div className={styles.circle_container}>
