@@ -6,6 +6,7 @@ import styles from "./string.module.css";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
+import { ActiveElement } from "../../types/common-types";
 // import { visualise } from "./utils";
 
 export type ReverseElement= {
@@ -13,10 +14,7 @@ export type ReverseElement= {
   state: ElementStates
 }
 
-type ActiveElement = {
-  loading: boolean;
-  disaibled: boolean;
-}
+
 
 const initialStateActiveElement = {
   loading: false,
