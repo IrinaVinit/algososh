@@ -7,6 +7,7 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
 import { ActiveElement } from "../../types/common-types";
+import { timeout } from "../../utils/utils";
 // import { visualise } from "./utils";
 
 export type ReverseElement= {
@@ -39,9 +40,7 @@ const swap = (arr: any, start: number, end: number) => {
   [arr[start], arr[end]] = [arr[end], arr[start]];
 }
 
-function timeout (ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+
 
 function getArray (str: string) {
 return str.split("").map((item) => ({item, state: ElementStates.Default }));

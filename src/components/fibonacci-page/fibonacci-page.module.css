@@ -8,3 +8,14 @@
 .input {
     width: 377px;
 }
+
+.circles {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+    max-width: 944px;
+    flex-wrap: wrap;
+
+}
