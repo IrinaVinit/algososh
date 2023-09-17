@@ -20,6 +20,7 @@ const initialStateActiveElement = {
   disaibledButton: false,
 };
 
+
 export const FibonacciPage: React.FC = () => {
   const [value, setValue] = useState("");
   const [isLoading, setIsLoading] = useState<ActiveElementFib>(initialStateActiveElement);
@@ -48,6 +49,7 @@ export const FibonacciPage: React.FC = () => {
 
   async function visualise() {
     setIsLoading({ loading: true, disaibledButton: true, disaibledInput: true });
+    setValue('');
     const arr = fibIterative(Number(value));
     let res: string[] = [];
     for (let i = 0; i <= arr.length - 1; i++) {
