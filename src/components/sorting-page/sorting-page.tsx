@@ -1,26 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
+import { getRandomArr } from "../../utils/utils";
+import { maxLength, minLength } from "../../constants/constants";
+import { Column } from "../ui/column/column";
 
 export const SortingPage: React.FC = () => {
+  const [array, setArray] = useState<number[]>([]);
+
+  function getNewArray() {
+    const arr = getRandomArr(minLength, maxLength);
+    setArray(arr);
+  }
+
   return (
-    <SolutionLayout title="Сортировка массива">
+    <SolutionLayout title="Сортировка массива" >
       <div className={`${styles.grid} ${styles.container}`}>
         <div className={`${styles.flex} ${styles.radioInputs}`}>
-          <RadioInput label="Выбор" checked />
+          <RadioInput label="Выбор" />
           <RadioInput label="Пузырек" />
         </div>
         <div className={`${styles.flex} ${styles.buttons}`}>
-          <Button extraClass={styles.button} sorting={Direction.Ascending} text='По возрастанию'/>
-          <Button extraClass={styles.button} sorting={Direction.Descending} text='По убыванию'/>
+          <Button
+            extraClass={styles.button}
+            sorting={Direction.Ascending}
+            text="По возрастанию"
+          />
+          <Button
+            extraClass={styles.button}
+            sorting={Direction.Descending}
+            text="По убыванию"
+          />
         </div>
         <div className={styles.newAr}>
-            <Button text='Новый массив' extraClass={styles.button} />
+          <Button text="Новый массив" extraClass={styles.button} onClick={getNewArray} type='button'/>
         </div>
-        
+      </div>
+      
+      <div className={styles.columns}>
+      {array.map((item, index) => (
+        <Column index={item} key={index} extraClass={styles.column}/>
+      ))}
       </div>
     </SolutionLayout>
   );

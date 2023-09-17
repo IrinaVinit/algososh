@@ -1,34 +1,38 @@
 .grid {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-      /* align-content: center; */
-      
-      align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  align-items: center;
 }
 
-.flex{
-    display: flex;
-    flex-wrap: wrap;
+.flex {
+  display: flex;
+  flex-wrap: wrap;
 }
 .container {
-    /* justify-content: center;  */
-    margin: 0 98px;
-    /* align-content: baseline */
+  margin: 0 98px 48px;
 }
 .radioInputs {
-    gap: 40px;
+  gap: 40px;
 }
 
 .buttons {
-gap: 12px;
-justify-self: center;
-
+  gap: 12px;
+  justify-self: center;
 }
 .button {
-    width: 205px;
-    height: 60px;
+  width: 205px;
+  height: 60px;
 }
-.newAr{
-   justify-self: end;
-   
+.newAr {
+  justify-self: end;
+}
+.columns {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+}
+
+.column {
+  flex-direction: column-reverse;
 }
