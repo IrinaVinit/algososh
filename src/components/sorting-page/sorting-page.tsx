@@ -90,17 +90,26 @@ export const SortingPage: React.FC = () => {
   async function bubbleSorting(arr: ReverseElement[], direction: Direction) {
     const { length } = arr;
     for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length; j++) {
+      for (let j = 0; j < length - i - 1; j++) {
+        changeColor(arr, j, ElementStates.Changing);
+        changeColor(arr, j+1, ElementStates.Changing);
+        setArray([...arr]);
+        await timeout(DELAY_IN_MS);
         if (
           direction === Direction.Ascending
-            ? array[j + 1] < array[j]
-            : array[j + 1] < array[j]
+            ? array[j + 1].item < array[j].item
+            : array[j + 1].item > array[j].item
         ) {
           swap(arr, j, j + 1);
+          
         }
+        changeColor(arr, j+1, ElementStates.Default);
+        changeColor(arr, j, ElementStates.Default);
+          setArray([...arr]);
       }
+      changeColor(arr, length - i - 1, ElementStates.Modified);
+      setArray([...arr]);
     }
-    return array;
   }
 
   async function sortInAscending(arr: ReverseElement[]) {
