@@ -4,7 +4,7 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import { changeColor, getRandomArr, swap, timeout } from "../../utils/utils";
+import { changeColor, changeTwoColor, getRandomArr, swap, timeout } from "../../utils/utils";
 import { maxLength, minLength } from "../../constants/constants";
 import { Column } from "../ui/column/column";
 import { Sorting } from "../../types/common-types";
@@ -81,8 +81,7 @@ export const SortingPage: React.FC = () => {
         setArray([...arr]);
       }
       swap(arr, i, minInd);
-      changeColor(arr, minInd, ElementStates.Default);
-      changeColor(arr, i, ElementStates.Modified);
+      changeTwoColor(arr, minInd, i, ElementStates.Default, ElementStates.Modified);
       setArray([...arr]);
     }
   }
@@ -91,8 +90,7 @@ export const SortingPage: React.FC = () => {
     const { length } = arr;
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < length - i - 1; j++) {
-        changeColor(arr, j, ElementStates.Changing);
-        changeColor(arr, j+1, ElementStates.Changing);
+        changeTwoColor(arr, j, j+1, ElementStates.Changing, ElementStates.Changing);
         setArray([...arr]);
         await timeout(DELAY_IN_MS);
         if (
@@ -103,8 +101,7 @@ export const SortingPage: React.FC = () => {
           swap(arr, j, j + 1);
           
         }
-        changeColor(arr, j+1, ElementStates.Default);
-        changeColor(arr, j, ElementStates.Default);
+        changeTwoColor(arr, j, j+1, ElementStates.Default, ElementStates.Default);
           setArray([...arr]);
       }
       changeColor(arr, length - i - 1, ElementStates.Modified);
