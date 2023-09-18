@@ -7,20 +7,18 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
 import { ActiveElement } from "../../types/common-types";
-import { timeout } from "../../utils/utils";
+import { changeElements, changeTwoColor, swap, timeout } from "../../utils/utils";
 // import { visualise } from "./utils";
 
-export type ReverseElement= {
-  item: string,
-  state: ElementStates
-}
-
-
+export type ReverseElement = {
+  item: string;
+  state: ElementStates;
+};
 
 const initialStateActiveElement = {
   loading: false,
-  disaibled: false
-}
+  disaibled: false,
+};
 
 export const StringComponent: React.FC = () => {
   const [value, setValue] = useState<string>("");
@@ -29,56 +27,42 @@ export const StringComponent: React.FC = () => {
 
   const onClick = () => {
     visualise(value);
-  }
-  
+  };
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-   setValue(e.target.value);
+    setValue(e.target.value);
+  };
+
+  function getArray(str: string) {
+    return str.split("").map((item) => ({ item, state: ElementStates.Default }));
   }
-  
-
-const swap = (arr: any, start: number, end: number) => {
-  [arr[start], arr[end]] = [arr[end], arr[start]];
-}
 
 
 
-function getArray (str: string) {
-return str.split("").map((item) => ({item, state: ElementStates.Default }));
-}
+  async function changeElements(arr: ReverseElement[], start: number, end: number) {
+    while (start <= end) {
+      await timeout(DELAY_IN_MS);
+      changeTwoColor(arr, start, end, ElementStates.Changing, ElementStates.Changing);
+      setReverseArr([...arr]);
+      await timeout(DELAY_IN_MS);
+      swap(arr, start, end);
+      changeTwoColor(arr, start, end, ElementStates.Modified, ElementStates.Modified);
+      setReverseArr([...arr]);
+      start++;
+      end--;
+    }
+  }
 
-function changeColor (arr: ReverseElement[], start: number, end: number, state: ElementStates) {
- if(arr) {
-  arr[start].state = state;
-  arr[end].state = state;
-  
- }
- return arr;
-}
-
-async function changeElements (arr:ReverseElement[], start: number, end: number) {
-  while (start <= end) {
-    await timeout(DELAY_IN_MS);
-     changeColor(arr, start, end, ElementStates.Changing);
-     setReverseArr([...arr]);
-     await timeout(DELAY_IN_MS);
-     swap(arr, start, end);
-     changeColor(arr, start, end, ElementStates.Modified);
-     setReverseArr([...arr]);
-     start ++;
-     end --;
-}
-}
-
-async function visualise (str: string) {
-    setIsLoading({loading: true, disaibled: true});
+  async function visualise(str: string) {
+    setIsLoading({ loading: true, disaibled: true });
     const arr = getArray(str);
     let start = 0;
-    let end = arr.length -1;
+    let end = arr.length - 1;
     setReverseArr(arr);
     setValue("");
     await changeElements(arr, start, end);
     setIsLoading(initialStateActiveElement);
-}
+  }
 
   return (
     <SolutionLayout title="Строка">
@@ -91,18 +75,25 @@ async function visualise (str: string) {
           onChange={onChange}
           disabled={isLoading.disaibled}
         />
-        <Button 
-        type="button"
-        onClick={onClick}
-        extraClass={styles.button} 
-        text="Развернуть" 
-        isLoader={isLoading.loading}
-        disabled={!value}
+        <Button
+          type="button"
+          onClick={onClick}
+          extraClass={styles.button}
+          text="Развернуть"
+          isLoader={isLoading.loading}
+          disabled={!value}
         />
       </div>
       <div className={styles.circle_container}>
         {isReverseArr &&
-          isReverseArr.map((item, index) => <Circle letter={item.item} key={index} extraClass={styles.circle} state={item.state}/>)}
+          isReverseArr.map((item, index) => (
+            <Circle
+              letter={item.item}
+              key={index}
+              extraClass={styles.circle}
+              state={item.state}
+            />
+          ))}
       </div>
     </SolutionLayout>
   );

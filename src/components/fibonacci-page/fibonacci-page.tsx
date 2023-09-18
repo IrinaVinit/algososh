@@ -15,7 +15,6 @@ type ActiveElementFib = {
 
 const initialStateActiveElement = {
   loading: false,
-  disaibled: false,
   disaibledInput: false,
   disaibledButton: false,
 };

@@ -28,11 +28,8 @@
 }
 .columns {
   display: flex;
-  flex-direction: row;
+  align-items: flex-end;
   gap: 10px;
   justify-content: center;
 }
 
-.column {
-  flex-direction: column-reverse;
-}

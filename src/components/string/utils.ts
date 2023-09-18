@@ -3,28 +3,23 @@
 // import { ElementStates } from "../../types/element-states";
 // import { DELAY_IN_MS } from "../../constants/delays";
 
+import { ElementStates } from "../../types/element-states";
+import { ReverseElement } from "./string";
 
+console.log('1')
 
-export const swap = (arr: any, start: number, end: number) => {
-  [arr[start], arr[end]] = [arr[end], arr[start]];
+export function getArray (str: string) {
+return str.split("").map((item) => ({item, state: ElementStates.Default }));
 }
 
-// export function timeout (ms: number) {
-//   return new Promise(resolve => setTimeout(resolve, ms))
-// }
-
-// export function getArray (str: string) {
-// return str.split("").map((item) => ({item, state: ElementStates.Default }));
-// }
-
-// export function changeColor (arr: ReverseElement[], start: number, end: number, state: ElementStates) {
-//  if(arr) {
-//   arr[start].state = state;
-//   arr[end].state = state;
+export function changeColor (arr: ReverseElement[], start: number, end: number, state: ElementStates) {
+ if(arr) {
+  arr[start].state = state;
+  arr[end].state = state;
   
-//  }
-//  return arr;
-// }
+ }
+ return arr;
+}
 
 // export async function changeElements (arr: ReverseElement[], start: number, end: number, cb: React.Dispatch<React.SetStateAction<ReverseElement[]>>) {
 //   while (start <= end) {
@@ -40,14 +35,14 @@ export const swap = (arr: any, start: number, end: number) => {
 // }
 // }
 
-// export async function visualise (loadingCb: React.Dispatch<React.SetStateAction<boolean>>, str: string,  arrStateCb: React.Dispatch<React.SetStateAction<ReverseElement[]>>, valueCb: React.Dispatch<React.SetStateAction<string>>, changeElementsFn: Function) {
-//     loadingCb(true);
-//     const arr = getArray(str);
-//     let start = 0;
-//     let end = arr.length -1;
-//     arrStateCb(arr);
-//     valueCb("");
-//     await changeElementsFn(arr, start, end);
-//     loadingCb(false);
-// }
+export async function visualise (loadingCb: React.Dispatch<React.SetStateAction<boolean>>, str: string,  arrStateCb: React.Dispatch<React.SetStateAction<ReverseElement[]>>, valueCb: React.Dispatch<React.SetStateAction<string>>, changeElementsFn: Function) {
+    loadingCb(true);
+    const arr = getArray(str);
+    let start = 0;
+    let end = arr.length -1;
+    arrStateCb(arr);
+    valueCb("");
+    await changeElementsFn(arr, start, end);
+    loadingCb(false);
+}
     
