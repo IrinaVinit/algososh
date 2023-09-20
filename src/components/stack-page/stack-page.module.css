@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    gap: 80px;
+    justify-content: center;
+}
+
+.controls {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 377px 121px 108px;
+    
+}
+
+.stackList {
+    display: flex;
+    list-style-type: none;
+    margin: 48px 0 0;
+    padding: 0;
+    justify-content: center;
+    gap: 16px;
+}

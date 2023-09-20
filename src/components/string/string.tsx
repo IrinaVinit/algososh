@@ -6,9 +6,14 @@ import styles from "./string.module.css";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
-import { ActiveElement } from "../../types/common-types";
-import { changeElements, changeTwoColor, swap, timeout } from "../../utils/utils";
+
+import { changeTwoColor, swap, timeout } from "../../utils/utils";
 // import { visualise } from "./utils";
+
+type ActiveElement = {
+  loading: boolean;
+  disaibled: boolean;
+}
 
 export type ReverseElement = {
   item: string;

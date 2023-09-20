@@ -11,7 +11,7 @@ import { Sorting } from "../../types/common-types";
 import { ElementStates } from "../../types/element-states";
 import { DELAY_IN_MS } from "../../constants/delays";
 
-export type ReverseElement = {
+export type CircleElement = {
   item: number;
   state: ElementStates;
 };
@@ -44,7 +44,7 @@ const visualStateAsc = {
 };
 
 export const SortingPage: React.FC = () => {
-  const [array, setArray] = useState<ReverseElement[]>([]);
+  const [array, setArray] = useState<CircleElement[]>([]);
   const [sotringType, setSortingType] = useState<Sorting>(Sorting.Selection);
   const [isLoading, setIsLoading] = useState<ActiveElementSort>(initialState);
 
@@ -56,7 +56,7 @@ export const SortingPage: React.FC = () => {
     setArray(arr);
   }
 
-  async function sortSelection(arr: ReverseElement[], direction: Direction) {
+  async function sortSelection(arr: CircleElement[], direction: Direction) {
     const { length } = arr;
     for (let i = 0; i < length; i ++) {
       let minInd = i;
@@ -86,7 +86,7 @@ export const SortingPage: React.FC = () => {
     }
   }
 
-  async function bubbleSorting(arr: ReverseElement[], direction: Direction) {
+  async function bubbleSorting(arr: CircleElement[], direction: Direction) {
     const { length } = arr;
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < length - i - 1; j++) {
@@ -109,7 +109,7 @@ export const SortingPage: React.FC = () => {
     }
   }
 
-  async function sortInAscending(arr: ReverseElement[]) {
+  async function sortInAscending(arr: CircleElement[]) {
     if (sotringType === Sorting.Selection) {
       await sortSelection(arr, Direction.Ascending);
     } else {
@@ -117,7 +117,7 @@ export const SortingPage: React.FC = () => {
     }
   }
 
-  async function sortInDescending(arr: ReverseElement[]) {
+  async function sortInDescending(arr: CircleElement[]) {
     if (sotringType === Sorting.Selection) {
       await sortSelection(arr, Direction.Descending);
     } else {

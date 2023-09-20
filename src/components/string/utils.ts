@@ -6,20 +6,19 @@
 import { ElementStates } from "../../types/element-states";
 import { ReverseElement } from "./string";
 
-console.log('1')
 
 export function getArray (str: string) {
 return str.split("").map((item) => ({item, state: ElementStates.Default }));
 }
 
-export function changeColor (arr: ReverseElement[], start: number, end: number, state: ElementStates) {
- if(arr) {
-  arr[start].state = state;
-  arr[end].state = state;
+// export function changeColor (arr: ReverseElement[], start: number, end: number, state: ElementStates) {
+//  if(arr) {
+//   arr[start].state = state;
+//   arr[end].state = state;
   
- }
- return arr;
-}
+//  }
+//  return arr;
+// }
 
 // export async function changeElements (arr: ReverseElement[], start: number, end: number, cb: React.Dispatch<React.SetStateAction<ReverseElement[]>>) {
 //   while (start <= end) {
