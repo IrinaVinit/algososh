@@ -14,8 +14,12 @@
 .stackList {
     display: flex;
     list-style-type: none;
-    margin: 48px 0 0;
+    margin: 48px auto 0;
     padding: 0;
     justify-content: center;
-    gap: 16px;
+    column-gap: 16px;
+    row-gap: 48px;
+    max-width: 944px;
+    flex-wrap: wrap;
+    
 }
