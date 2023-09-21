@@ -11,6 +11,8 @@ export interface IStack<T> {
   clear: () => void;
   getContainer: () => T[];
 }
+
+
 export interface IQueue<T> {
   enqueue: (item: T) => void;
   dequeue: () => void;
@@ -18,4 +20,6 @@ export interface IQueue<T> {
   getQueue: () => (T | null)[];
   getIndexHead: () => number;
   getIndexTail: () => number;
+  isEmpty: () => boolean;
+  clear: () => void
 }

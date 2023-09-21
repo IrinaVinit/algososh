@@ -32,7 +32,6 @@ export const QueuePage: React.FC = () => {
   const [isQueue, setIsQueue] = useState<boolean>(false);
 
   const queue = useMemo(() => new Queue<string>(7), []);
-  console.log(queue.getQueue());
 
   const length = queue.getQueue().length;
 
@@ -42,7 +41,6 @@ export const QueuePage: React.FC = () => {
       state: ElementStates.Default,
     };
     return Array(length).fill(circleItem);
-    
   }
 
   useEffect(() => {
@@ -55,39 +53,54 @@ export const QueuePage: React.FC = () => {
   };
 
   async function addValue(value: string) {
-    setIsLoading({loadingAdd: true, loadingClear:false, loadingDel:false});
+    setIsLoading({ loadingAdd: true, loadingClear: false, loadingDel: false });
     setIsQueue(true);
     queue.enqueue(value);
     const tail = queue.getIndexTail();
-    console.log(tail);
-    console.log(queueState);
     queueState[tail] = {
       item: value,
-      state: ElementStates.Changing
-    }
+      state: ElementStates.Changing,
+    };
     setValue("");
     setQueueState(queueState);
     await timeout(SHORT_DELAY_IN_MS);
     queueState[tail] = {
       item: value,
-      state: ElementStates.Default
+      state: ElementStates.Default,
     };
     setQueueState(queueState);
     setIsLoading(initialState);
   }
 
-  function deleteValue() {
-    setIsLoading({loadingAdd: false, loadingClear:false, loadingDel:true});
+  async function deleteValue() {
+    setIsLoading({ loadingAdd: false, loadingClear: false, loadingDel: true });
+    const head = queue.getIndexHead();
+    queueState[head] = {
+      item: "",
+      state: ElementStates.Changing,
+    };
 
+    setQueueState(queueState);
+    await timeout(SHORT_DELAY_IN_MS);
+    queueState[head] = {
+      item: "",
+      state: ElementStates.Default,
+    };
+    queue.dequeue();
+    if (queue.isEmpty()) {
+      setIsQueue(false);
+      queue.clear();
+      setIsLoading(initialState);
+    }
+    setQueueState(queueState);
     setIsLoading(initialState);
   }
 
   function clearQueue() {
-    setIsLoading({loadingAdd: false, loadingClear:true, loadingDel:false});
+    setIsLoading({ loadingAdd: false, loadingClear: true, loadingDel: false });
     setIsQueue(false);
     queue.clear();
     setValue("");
-    console.log(queue.getQueue());
     setQueueState(getInitualCircles());
     setIsLoading(initialState);
   }
@@ -123,8 +136,8 @@ export const QueuePage: React.FC = () => {
               letter={item.item}
               key={index}
               index={index}
-              head={isQueue && index===queue.getIndexHead() ? 'head' : undefined}
-              tail={isQueue && index===queue.getIndexTail() ? 'tail' : undefined}
+              head={isQueue && index === queue.getIndexHead() ? "head" : undefined}
+              tail={isQueue && index === queue.getIndexTail() ? "tail" : undefined}
               state={item.state}
             />
           ))}
