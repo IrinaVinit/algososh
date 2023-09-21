@@ -13,11 +13,7 @@ export class Stack<T> implements IStack<T> {
     }
   };
 
-  // peak = (): T | null => {
-  //   return this.container[this.getSize() - 1] || null;
-  // };
-
-  getSize = () => this.container.length;
+  getSize = (): number => this.container.length;
 
   clear = (): void => {
     this.container.length = 0;
