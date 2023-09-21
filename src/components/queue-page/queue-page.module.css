@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    gap: 80px;
+    justify-content: center;
+}
+
+.controls {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 377px 121px 108px;
+    
+}
+
+.stackList {
+    display: flex;
+    list-style-type: none;
+    margin: 48px auto 0;
+    padding: 0;
+    justify-content: center;
+    column-gap: 16px;
+    row-gap: 48px;
+    max-width: 944px;
+    flex-wrap: wrap;
+    
+}
