@@ -22,3 +22,10 @@ export interface IQueue<T> {
   isEmpty: () => boolean;
   clear: () => void
 }
+
+export interface ILinkedList<T> {
+  appendArray: (elements: T[]) => void;
+  appendToIndex: (element: T, index: number) => void;
+  getSize: () => number;
+
+}

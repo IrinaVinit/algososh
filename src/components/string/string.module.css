@@ -16,3 +16,7 @@
     gap: 16px;
     justify-content: center;
 }
+
+.button {
+    min-width: 130px;
+}

@@ -4,7 +4,13 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import { changeColor, changeTwoColor, getRandomArr, swap, timeout } from "../../utils/utils";
+import {
+  changeColor,
+  changeTwoColor,
+  getRandomArr,
+  swap,
+  timeout,
+} from "../../utils/utils";
 import { maxLength, minLength } from "../../constants/constants";
 import { Column } from "../ui/column/column";
 import { Sorting } from "../../types/common-types";
@@ -58,10 +64,10 @@ export const SortingPage: React.FC = () => {
 
   async function sortSelection(arr: CircleElement[], direction: Direction) {
     const { length } = arr;
-    for (let i = 0; i < length; i ++) {
+    for (let i = 0; i < length; i++) {
       let minInd = i;
       changeColor(arr, minInd, ElementStates.Changing);
-      for (let j = i + 1; j < length; j ++) {
+      for (let j = i + 1; j < length; j++) {
         changeColor(arr, j, ElementStates.Changing);
         setArray([...arr]);
         await timeout(DELAY_IN_MS);
@@ -90,7 +96,7 @@ export const SortingPage: React.FC = () => {
     const { length } = arr;
     for (let i = 0; i < length; i++) {
       for (let j = 0; j < length - i - 1; j++) {
-        changeTwoColor(arr, j, j+1, ElementStates.Changing, ElementStates.Changing);
+        changeTwoColor(arr, j, j + 1, ElementStates.Changing, ElementStates.Changing);
         setArray([...arr]);
         await timeout(DELAY_IN_MS);
         if (
@@ -99,10 +105,9 @@ export const SortingPage: React.FC = () => {
             : array[j + 1].item > array[j].item
         ) {
           swap(arr, j, j + 1);
-          
         }
-        changeTwoColor(arr, j, j+1, ElementStates.Default, ElementStates.Default);
-          setArray([...arr]);
+        changeTwoColor(arr, j, j + 1, ElementStates.Default, ElementStates.Default);
+        setArray([...arr]);
       }
       changeColor(arr, length - i - 1, ElementStates.Modified);
       setArray([...arr]);

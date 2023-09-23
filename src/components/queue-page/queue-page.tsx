@@ -108,7 +108,7 @@ export const QueuePage: React.FC = () => {
     <SolutionLayout title="Очередь">
       <div className={styles.container}>
         <div className={styles.controls}>
-          <Input isLimitText maxLength={4} value={value} onChange={onChange} />
+          <Input isLimitText maxLength={4} value={value} onChange={onChange} placeholder="Введите значение"/>
           <Button
             text="Добавить"
             isLoader={isLoading.loadingAdd}

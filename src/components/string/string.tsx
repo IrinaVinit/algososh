@@ -42,8 +42,6 @@ export const StringComponent: React.FC = () => {
     return str.split("").map((item) => ({ item, state: ElementStates.Default }));
   }
 
-
-
   async function changeElements(arr: ReverseElement[], start: number, end: number) {
     while (start <= end) {
       await timeout(DELAY_IN_MS);
