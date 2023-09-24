@@ -6,14 +6,10 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { Queue } from "./Queue";
-import { timeout } from "../../utils/utils";
+import { changeColor, timeout } from "../../utils/utils";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
-
-
-export type CircleElement = {
-  item: string;
-  state: ElementStates;
-};
+import { CircleElement } from "../../types/common-types";
+import { addValue, deleteValue, getInitualCircles } from "./utils";
 
 type ActiveElement = {
   loadingAdd: boolean;
@@ -36,16 +32,9 @@ export const QueuePage: React.FC = () => {
   const queue = useMemo(() => new Queue<string>(7), []);
   const length = queue.getQueue().length;
 
-  function getInitualCircles() {
-    const circleItem = {
-      item: "",
-      state: ElementStates.Default,
-    };
-    return Array(length).fill(circleItem);
-  }
-
+  
   useEffect(() => {
-    const arr = getInitualCircles();
+    const arr = getInitualCircles(length);
     setQueueState(arr);
   }, []);
 
@@ -53,45 +42,24 @@ export const QueuePage: React.FC = () => {
     setValue(evt.target.value);
   };
 
-  async function addValue(value: string) {
+
+  async function visualiseAddingValue(value: string) {
     setIsLoading({ loadingAdd: true, loadingClear: false, loadingDel: false });
     setIsQueue(true);
-    queue.enqueue(value);
-    const tail = queue.getIndexTail();
-    queueState[tail] = {
-      item: value,
-      state: ElementStates.Changing,
-    };
+    addValue(queue, queueState, value, ElementStates.Changing);
     setValue("");
     setQueueState(queueState);
     await timeout(SHORT_DELAY_IN_MS);
-    queueState[tail] = {
-      item: value,
-      state: ElementStates.Default,
-    };
+    changeColor(queueState, queue.getIndexTail(), ElementStates.Default)
     setQueueState(queueState);
     setIsLoading(initialState);
   }
 
-  async function deleteValue() {
+  async function visualiseDeleting() {
     setIsLoading({ loadingAdd: false, loadingClear: false, loadingDel: true });
-    const head = queue.getIndexHead();
-    queueState[head] = {
-      item: "",
-      state: ElementStates.Changing,
-    };
-
-    setQueueState(queueState);
-    await timeout(SHORT_DELAY_IN_MS);
-    queueState[head] = {
-      item: "",
-      state: ElementStates.Default,
-    };
-    queue.dequeue();
+    await deleteValue(queue, queueState, setQueueState);
     if (queue.isEmpty()) {
-      setIsQueue(false);
-      queue.clear();
-      setIsLoading(initialState);
+      clearQueue()
     }
     setQueueState(queueState);
     setIsLoading(initialState);
@@ -102,9 +70,11 @@ export const QueuePage: React.FC = () => {
     setIsQueue(false);
     queue.clear();
     setValue("");
-    setQueueState(getInitualCircles());
+    setQueueState(()=>getInitualCircles(length));
     setIsLoading(initialState);
   }
+
+
   return (
     <SolutionLayout title="Очередь">
       <div className={styles.container}>
@@ -114,19 +84,19 @@ export const QueuePage: React.FC = () => {
             text="Добавить"
             isLoader={isLoading.loadingAdd}
             disabled={!value || isLoading.loadingDel || isLoading.loadingClear}
-            onClick={() => addValue(value)}
+            onClick={() => visualiseAddingValue(value)}
           />
           <Button
             text="Удалить"
             isLoader={isLoading.loadingDel}
             disabled={!isQueue || isLoading.loadingAdd || isLoading.loadingClear}
-            onClick={deleteValue}
+            onClick={visualiseDeleting}
           />
         </div>
         <Button
           text="Очистить"
           isLoader={isLoading.loadingClear}
-          disabled={!isQueue || isLoading.loadingAdd === true || isLoading.loadingDel}
+          disabled={!isQueue || isLoading.loadingAdd|| isLoading.loadingDel}
           onClick={clearQueue}
         />
       </div>
@@ -137,8 +107,8 @@ export const QueuePage: React.FC = () => {
               letter={item.item}
               key={index}
               index={index}
-              head={isQueue && index === queue.getIndexHead() ? "head" : undefined}
-              tail={isQueue && index === queue.getIndexTail() ? "tail" : undefined}
+              head={isQueue && index === queue.getIndexHead() ? "head" : ''}
+              tail={isQueue && index === queue.getIndexTail() ? "tail" : ''}
               state={item.state}
             />
           ))}

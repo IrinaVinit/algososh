@@ -13,23 +13,21 @@ export interface IStack<T> {
   getContainer: () => T[];
 }
 
-
 export interface IQueue<T> {
   enqueue: (item: T) => void;
   dequeue: () => void;
-  peak: () => T ;
+  peak: () => T;
   getQueue: () => (T | null)[];
   getIndexHead: () => number;
   getIndexTail: () => number;
   isEmpty: () => boolean;
-  clear: () => void
+  clear: () => void;
 }
 
 export interface ILinkedList<T> {
   appendArray: (elements: T[]) => void;
   appendToIndex: (element: T, index: number) => void;
   getSize: () => number;
-
 }
 
 export type CircleElement = {
