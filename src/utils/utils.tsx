@@ -58,7 +58,7 @@ export function getRandomArr(min: number, max:number): number[] {
       reverseArrFn([...arr]);
       await timeout(DELAY_IN_MS);
       swap(arr, start, end);
-      changeTwoColor(arr, start, end, ElementStates.Modified, ElementStates.Changing);
+      changeTwoColor(arr, start, end, ElementStates.Modified, ElementStates.Modified);
       reverseArrFn([...arr]);
       start++;
       end--;
