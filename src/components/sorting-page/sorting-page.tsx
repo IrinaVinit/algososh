@@ -4,18 +4,11 @@ import { RadioInput } from "../ui/radio-input/radio-input";
 import styles from "./sorting-page.module.css";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import {
-  changeColor,
-  changeTwoColor,
-  getRandomArr,
-  swap,
-  timeout,
-} from "../../utils/utils";
-import { maxLength, minLength } from "../../constants/constants";
+import { getNewArray } from "../../utils/utils";
 import { Column } from "../ui/column/column";
 import { Sorting } from "../../types/common-types";
 import { ElementStates } from "../../types/element-states";
-import { DELAY_IN_MS } from "../../constants/delays";
+import { sortInAscending, sortInDescending } from "./utils";
 
 export type CircleElement = {
   item: number;
@@ -51,94 +44,22 @@ const visualStateAsc = {
 
 export const SortingPage: React.FC = () => {
   const [array, setArray] = useState<CircleElement[]>([]);
-  const [sotringType, setSortingType] = useState<Sorting>(Sorting.Selection);
+  const [sortingType, setSortingType] = useState<Sorting>(Sorting.Selection);
   const [isLoading, setIsLoading] = useState<ActiveElementSort>(initialState);
 
-  function getNewArray() {
-    const arr = getRandomArr(minLength, maxLength).map((item) => ({
-      item,
-      state: ElementStates.Default,
-    }));
-    setArray(arr);
-  }
-
-  async function sortSelection(arr: CircleElement[], direction: Direction) {
-    const { length } = arr;
-    for (let i = 0; i < length; i++) {
-      let minInd = i;
-      changeColor(arr, minInd, ElementStates.Changing);
-      for (let j = i + 1; j < length; j++) {
-        changeColor(arr, j, ElementStates.Changing);
-        setArray([...arr]);
-        await timeout(DELAY_IN_MS);
-        if (
-          direction === Direction.Ascending
-            ? arr[j].item < arr[minInd].item
-            : arr[j].item > arr[minInd].item
-        ) {
-          minInd = j;
-          if (minInd !== i) {
-            changeColor(arr, minInd, ElementStates.Default);
-          }
-        }
-        if (j !== minInd) {
-          changeColor(arr, j, ElementStates.Default);
-        }
-        setArray([...arr]);
-      }
-      swap(arr, i, minInd);
-      changeTwoColor(arr, minInd, i, ElementStates.Default, ElementStates.Modified);
-      setArray([...arr]);
-    }
-  }
-
-  async function bubbleSorting(arr: CircleElement[], direction: Direction) {
-    const { length } = arr;
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length - i - 1; j++) {
-        changeTwoColor(arr, j, j + 1, ElementStates.Changing, ElementStates.Changing);
-        setArray([...arr]);
-        await timeout(DELAY_IN_MS);
-        if (
-          direction === Direction.Ascending
-            ? array[j + 1].item < array[j].item
-            : array[j + 1].item > array[j].item
-        ) {
-          swap(arr, j, j + 1);
-        }
-        changeTwoColor(arr, j, j + 1, ElementStates.Default, ElementStates.Default);
-        setArray([...arr]);
-      }
-      changeColor(arr, length - i - 1, ElementStates.Modified);
-      setArray([...arr]);
-    }
-  }
-
-  async function sortInAscending(arr: CircleElement[]) {
-    if (sotringType === Sorting.Selection) {
-      await sortSelection(arr, Direction.Ascending);
-    } else {
-      await bubbleSorting(arr, Direction.Ascending);
-    }
-  }
-
-  async function sortInDescending(arr: CircleElement[]) {
-    if (sotringType === Sorting.Selection) {
-      await sortSelection(arr, Direction.Descending);
-    } else {
-      await bubbleSorting(arr, Direction.Descending);
-    }
-  }
+  const getNewArr = () => {
+    setArray(getNewArray());
+  };
 
   async function visualiseSortInAscending() {
     setIsLoading(visualStateAsc);
-    await sortInAscending(array);
+    await sortInAscending(sortingType, array, setArray);
     setIsLoading(initialState);
   }
 
   async function visualiseSortInDescending() {
     setIsLoading(visualStateDesc);
-    await sortInDescending(array);
+    await sortInDescending(sortingType, array, setArray);
     setIsLoading(initialState);
   }
 
@@ -149,14 +70,14 @@ export const SortingPage: React.FC = () => {
           <RadioInput
             value="selection"
             label="Выбор"
-            checked={sotringType === Sorting.Selection}
+            checked={sortingType === Sorting.Selection}
             onChange={() => setSortingType(Sorting.Selection)}
             disabled={isLoading.disaibledRadio}
           />
           <RadioInput
             value="bubbleSort"
             label="Пузырек"
-            checked={sotringType === Sorting.BubbleSort}
+            checked={sortingType === Sorting.BubbleSort}
             onChange={() => setSortingType(Sorting.BubbleSort)}
             disabled={isLoading.disaibledRadio}
           />
@@ -183,7 +104,7 @@ export const SortingPage: React.FC = () => {
           <Button
             text="Новый массив"
             extraClass={styles.button}
-            onClick={getNewArray}
+            onClick={getNewArr}
             type="button"
             disabled={isLoading.disaibledButton}
           />

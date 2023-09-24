@@ -5,6 +5,13 @@ import { ElementStates } from "../types/element-states";
 export function timeout (ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
+export   function getNewArray() {
+  const arr = getRandomArr(minLength, maxLength).map((item) => ({
+    item,
+    state: ElementStates.Default,
+  }));
+  return arr;
+}
 
 export const swap = (arr: any, start: number, end: number) => {
     [arr[start], arr[end]] = [arr[end], arr[start]];
