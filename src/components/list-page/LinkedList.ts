@@ -52,10 +52,9 @@ export class LinkedList<T> implements ILinkedList<T> {
           const currentTail = this.tail;
           currentTail.next = node;
           this.tail = node;
-          // node.next = this.tail;
-          // this.tail = node;
+         
         }
-        console.log(this.tail);
+       
       } else {
         let curr = this.head;
         let currIndex = 0;

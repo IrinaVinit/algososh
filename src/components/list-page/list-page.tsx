@@ -99,6 +99,7 @@ export const ListPage: React.FC = () => {
       listState.unshift({
         item: value,
         head: "head",
+        tail: 'tail',
         state: ElementStates.Modified,
       });
       setListState([...listState]);
@@ -138,6 +139,22 @@ export const ListPage: React.FC = () => {
     });
     setValue("");
     setIndex("");
+
+    if(!listState.length) {
+      listState.unshift({
+        item: value,
+        head: "head",
+        tail: 'tail',
+        state: ElementStates.Modified,
+      });
+      setListState([...listState]);
+      await timeout(DELAY_IN_MS);
+      listState[0].state = ElementStates.Default;
+      setListState([...listState]);
+      setIsLoading(initialState);
+    } else {
+
+
     const length = linkList.getSize() - 1;
     linkList.appendToIndex(value, length);
     const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
@@ -146,7 +163,7 @@ export const ListPage: React.FC = () => {
     setListState([...listState]);
 
     await timeout(DELAY_IN_MS);
-    const tailItem = linkList.getTail();
+   
     listState.push({ item: value, head: "", tail: 'tail', state: ElementStates.Modified });
     listState[length].head = "";
     listState[length].tail = "";
@@ -156,7 +173,7 @@ export const ListPage: React.FC = () => {
     setListState([...listState]);
     setIsLoading(initialState);
   }
-
+  }
   async function addElementByIndex(value: string, index: number) {
     setIsLoading({
       isLoading: true,
@@ -236,7 +253,7 @@ export const ListPage: React.FC = () => {
     listState.shift();
     if(listState.length) {
       listState[0].head = 'head' } 
-    console.log(listState, linkList);
+
     setListState([...listState]);
    
     setIsLoading(initialState);
