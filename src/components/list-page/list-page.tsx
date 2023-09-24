@@ -13,6 +13,7 @@ import { DELAY_IN_MS } from "../../constants/delays";
 export type CircleElement = {
   item: string;
   head?: string | React.ReactElement | null;
+  tail?: string | React.ReactElement | null;
   state: ElementStates;
 };
 type ActiveElement = {
@@ -43,11 +44,24 @@ export const ListPage: React.FC = () => {
 
   const linkList = useMemo(() => new LinkedList<string>(), []);
   const initialArray = ["c", "o", "o", "l"];
+ 
+  const buttonDeleteDisaibled = !linkList.getSize() || isLoading.isLoading;
+  const buttonByIndexDisaibled =
+    !index || Number(index) < 0 || linkList.getSize()-1 < Number(index);
+  const buttonAddHeadTailDisaibled =
+    !value || isLoading.isLoading || linkList.getSize() > 8;
 
-  function getCircle(value: string, head?: React.ReactElement<CircleElement>) {
+
+  function getCircle(value: string, index: number, head?: React.ReactElement<CircleElement>, tail?: React.ReactElement<CircleElement>) {
+   
+    const tailText = index === linkList.getSize() - 1 ? "tail" : "";
+    const headText = index === 0 ? "head" : "";
+
     const circleItem = {
       item: value,
-      head: head ?? "",
+      index: index,
+      head: head ?? headText,
+      tail: tail ?? tailText,
       state: ElementStates.Default,
     };
     return circleItem;
@@ -55,11 +69,9 @@ export const ListPage: React.FC = () => {
 
   useEffect(() => {
     linkList.appendArray(initialArray);
-    const initialList = initialArray.map((item) => getCircle(item));
+    const initialList = initialArray.map((item, index) => getCircle(item, index));
     setListState(initialList);
   }, []);
-
-  console.log(linkList.getSize());
 
   const onChangeValue = (evt: ChangeEvent<HTMLInputElement>) => {
     setValue(evt.target.value);
@@ -83,24 +95,35 @@ export const ListPage: React.FC = () => {
     linkList.appendToIndex(value, 0);
 
     const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
-
-    listState[0].head = newCircle;
-    setListState(listState);
-
-    await timeout(DELAY_IN_MS);
-    const headItem = linkList.getHead();
-    listState.unshift({
-      item: headItem!.value,
-      head: "head",
-      state: ElementStates.Modified,
-    });
-    listState[1].head = "";
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    console.log(listState);
-    listState[0].state = ElementStates.Default;
-    setListState([...listState]);
-    setIsLoading(initialState);
+    if(!listState.length) {
+      listState.unshift({
+        item: value,
+        head: "head",
+        state: ElementStates.Modified,
+      });
+      setListState([...listState]);
+      await timeout(DELAY_IN_MS);
+      listState[0].state = ElementStates.Default;
+      setListState([...listState]);
+      setIsLoading(initialState);
+    } else {
+      listState[0].head = newCircle;
+      setListState(listState);
+  
+      await timeout(DELAY_IN_MS);
+      const headItem = linkList.getHead();
+      listState.unshift({
+        item: headItem!.value,
+        head: "head",
+        state: ElementStates.Modified,
+      });
+      listState[1].head = "";
+      setListState([...listState]);
+      await timeout(DELAY_IN_MS);
+      listState[0].state = ElementStates.Default;
+      setListState([...listState]);
+      setIsLoading(initialState);
+    }
   }
 
   async function addElementToTail(value: string) {
@@ -124,9 +147,9 @@ export const ListPage: React.FC = () => {
 
     await timeout(DELAY_IN_MS);
     const tailItem = linkList.getTail();
-    console.log(tailItem);
-    listState.push({ item: value, head: "", state: ElementStates.Modified });
+    listState.push({ item: value, head: "", tail: 'tail', state: ElementStates.Modified });
     listState[length].head = "";
+    listState[length].tail = "";
     setListState([...listState]);
     await timeout(DELAY_IN_MS);
     listState[length + 1].state = ElementStates.Default;
@@ -154,46 +177,34 @@ export const ListPage: React.FC = () => {
         listState[i - 1].head = "head";
       }
 
-      if (i > 0) {
+      if (i > 1) {
         listState[i - 1].head = "";
       }
+
       listState[i] = {
         ...listState[i],
         state: ElementStates.Changing,
+        tail: '',
         head: newCircle,
       };
-      if (i === index) {
-        listState[index].state = ElementStates.Default;
-      }
 
+      if (i === index) {
+        listState[i].state = ElementStates.Default
+      }
+      
       setListState([...listState]);
       await timeout(DELAY_IN_MS);
     }
     await timeout(DELAY_IN_MS);
-    listState.map((item) => (item.state = ElementStates.Default));
+    listState.map((item) => (
+      item.state = ElementStates.Default)
+      );
     listState.splice(index, 0, { item: value, head: "", state: ElementStates.Modified });
     listState[index + 1].head = "";
-
     setListState([...listState]);
     await timeout(DELAY_IN_MS);
     listState[index].state = ElementStates.Default;
     setListState([...listState]);
-    setIsLoading(initialState);
-  }
-
-  async function removeElementFromTail() {
-    setIsLoading({
-      isLoading: true,
-      loadingAddHead: false,
-      loadingAddTail: false,
-      loadingRemoveHead: false,
-      loadingRemoveTail: true,
-      loadingAddIndex: false,
-      loadingRemoveIndex: false,
-    });
-    await timeout(DELAY_IN_MS);
-    setValue("");
-    setIndex("");
     setIsLoading(initialState);
   }
 
@@ -207,13 +218,76 @@ export const ListPage: React.FC = () => {
       loadingAddIndex: false,
       loadingRemoveIndex: false,
     });
+    linkList.deleteHead();
+    listState[0].state =  ElementStates.Changing;
+    setListState([...listState]);
     await timeout(DELAY_IN_MS);
-    setValue("");
-    setIndex("");
+    const newCircle = <Circle letter={listState[0].item} state={ElementStates.Changing} isSmall />;
+
+    listState[0] = {
+      item: '',
+      head: 'head',
+      tail: newCircle,
+      state: ElementStates.Changing
+    };
+    
+    setListState([...listState]);
+    await timeout(DELAY_IN_MS);
+    listState.shift();
+    if(listState.length) {
+      listState[0].head = 'head' } 
+    console.log(listState, linkList);
+    setListState([...listState]);
+   
     setIsLoading(initialState);
   }
 
-  async function removeElementByIndex() {
+
+  async function removeElementFromTail() {
+    setIsLoading({
+      isLoading: true,
+      loadingAddHead: false,
+      loadingAddTail: false,
+      loadingRemoveHead: false,
+      loadingRemoveTail: true,
+      loadingAddIndex: false,
+      loadingRemoveIndex: false,
+    });
+   
+    const length = linkList.getSize() - 1;
+    listState[length].state =  ElementStates.Changing;
+    setListState([...listState]);
+    await timeout(DELAY_IN_MS);
+    const newCircle = <Circle letter={listState[length].item} state={ElementStates.Changing} isSmall />;
+
+    
+    listState[length] = {
+      item: '',
+      tail: newCircle,
+      state: ElementStates.Changing
+    };
+    setListState([...listState]);
+    await timeout(DELAY_IN_MS);
+    linkList.deleteTail();
+    listState.pop();
+    if(listState.length) {
+      listState[length-1].tail = 'tail' } 
+
+    setListState([...listState]);
+    setIsLoading(initialState);
+  }
+
+  async function removeElementByIndex(index: number) {
+    
+    if(index===0) {
+      removeElementFromHead();
+      return
+    }
+    if(index === listState.length-1) {
+      removeElementFromTail();
+      return
+    }
+    
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -223,16 +297,38 @@ export const ListPage: React.FC = () => {
       loadingAddIndex: false,
       loadingRemoveIndex: true,
     });
-    await timeout(DELAY_IN_MS);
-    setValue("");
     setIndex("");
+   
+    const newCircle = <Circle letter={listState[index].item} state={ElementStates.Changing} isSmall />;
+
+    for (let i = 0; i <= index; i++) {
+      listState[i].state = ElementStates.Changing 
+      setListState([...listState]);
+      await timeout(DELAY_IN_MS);
+    }
+
+    listState[index] = {
+      item: '',
+      tail: newCircle,
+      state: ElementStates.Changing
+    };
+    setListState([...listState]);
+    await timeout(DELAY_IN_MS);
+    
+    listState.splice(index, 1);
+    linkList.deleteByIndex(index);
+
+    setListState([...listState]);
+    await timeout(DELAY_IN_MS);
+
+    listState.map((item) => (
+      item.state = ElementStates.Default)
+      );
+
+    setListState([...listState]);
     setIsLoading(initialState);
   }
-  const buttonDeleteDisaibled = !linkList.getSize() || isLoading.isLoading;
-  const buttonByIndexDisaibled =
-    !index || Number(index) < 0 || linkList.getSize() < Number(index);
-  const buttonAddHeadTailDisaibled =
-    !value || isLoading.isLoading || linkList.getSize() > 8;
+
 
   return (
     <SolutionLayout title="Связный список">
@@ -289,7 +385,7 @@ export const ListPage: React.FC = () => {
             text="Удалить по индексу"
             isLoader={isLoading.loadingRemoveIndex}
             disabled={buttonByIndexDisaibled}
-            onClick={removeElementByIndex}
+            onClick={()=>removeElementByIndex(Number(index))}
           />
         </div>
         <ul className={styles.lineList}>
@@ -300,7 +396,7 @@ export const ListPage: React.FC = () => {
                   letter={item.item}
                   index={index}
                   head={item.head}
-                  tail={index === linkList.getSize() - 1 ? "tail" : ""}
+                  tail={item.tail}
                   state={item.state}
                 />
                 {index < listState.length - 1 && <ArrowIcon />}

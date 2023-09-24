@@ -40,12 +40,21 @@ export class LinkedList<T> implements ILinkedList<T> {
         if (!this.head) {
           this.head = node;
           this.tail = node;
-        } 
-        node.next = this.head;
-        this.head = node;
-        console.log(this.head);
+        } else {
+          node.next = this.head;
+          this.head = node;
+        }
       } else if (index === this.size - 1) {
-        this.tail = node;
+        if (!this.tail) {
+          this.tail = node;
+          this.head = node;
+        } else {
+          const currentTail = this.tail;
+          currentTail.next = node;
+          this.tail = node;
+          // node.next = this.tail;
+          // this.tail = node;
+        }
         console.log(this.tail);
       } else {
         let curr = this.head;
@@ -53,18 +62,67 @@ export class LinkedList<T> implements ILinkedList<T> {
         while (curr && currIndex <= index) {
           curr = curr.next;
           currIndex++;
-      }
-          node.next = curr?.next || null;
-          curr!.next = node;
         }
-        this.size++;
+        node.next = curr?.next || null;
+        curr!.next = node;
+      }
+      this.size++;
+    
     }
   }
+  deleteHead() {
+    if (!this.head) {
+      return;
+    }
+    if (this.head === this.tail) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      this.head = this.head.next;
+    }
 
+    this.size--;
+  }
 
-getHead() {
-  return this.head;
+  deleteTail(){
+    if(!this.tail){
+        return
+    }
+    if (this.head === this.tail) {
+      this.head = null;
+      this.tail = null;
+    } else {
+    let curr = this.tail;
+    let prev = curr;
+    prev.next = null;
+    this.size--;
+    }
 }
+
+deleteByIndex(index:number) {
+  if(index >= this.size){
+    return
+  }
+  if(index === 0){
+    this.deleteHead()
+    return
+  }
+  if(index === this.size-1){
+    this.deleteTail()
+    return
+  }
+  let curr = this.head
+    for(let i = 1; i < index; i++){
+    curr= curr!.next
+  }
+    curr!.next = curr!.next!.next
+    this.size--
+}
+
+
+  getHead() {
+    return this.head;
+  }
   getTail() {
     return this.tail;
   }
