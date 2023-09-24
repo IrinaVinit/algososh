@@ -1,3 +1,5 @@
+import { ElementStates } from "./element-states";
+
 export enum Sorting {
   Selection = "selection",
   BubbleSort = "bubbleSort",
@@ -29,3 +31,10 @@ export interface ILinkedList<T> {
   getSize: () => number;
 
 }
+
+export type CircleElement = {
+  item: string;
+  head?: string | React.ReactElement | null;
+  tail?: string | React.ReactElement | null;
+  state: ElementStates;
+};

@@ -8,12 +8,8 @@ import { ElementStates } from "../../types/element-states";
 import { Stack } from "./Stack";
 import { changeColor, timeout } from "../../utils/utils";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
-
-
-export type CircleElement = {
-  item: string;
-  state: ElementStates;
-};
+import { CircleElement } from "../../types/common-types";
+import { addToStack, clearStack, deleteElement, getArrFromStack } from "./utils";
 
 type ActiveElement = {
   loadingAdd: boolean;
@@ -32,53 +28,59 @@ export const StackPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<ActiveElement>(initialState);
   const [stackState, setStackState] = useState<CircleElement[]>([]);
 
-  const stack = useMemo(() => new Stack<CircleElement>(), []);
+  const myStack = useMemo(() => new Stack<CircleElement>(), []);
 
   const onChange = (evt: ChangeEvent<HTMLInputElement>) => {
     setValue(evt.target.value);
   };
 
-
-
-  async function addElement (value: string) {
-    setIsLoading({loadingAdd: true, loadingDel: false, loadingClear: false})
-    const circleItem = {
-      item: value,
-      state: ElementStates.Changing,
-    };
-    stack.push(circleItem);
-    const arr = stack.getContainer();
+  async function visualiseAdding(value: string) {
+    setIsLoading({ loadingAdd: true, loadingDel: false, loadingClear: false });
+    addToStack(value, myStack);
+    const arr = getArrFromStack(myStack);
     setStackState(arr);
-    setValue('');
+    setValue("");
     await timeout(SHORT_DELAY_IN_MS);
-    changeColor(arr,stack.getSize() -1, ElementStates.Default);
+    changeColor(arr, myStack.getSize() - 1, ElementStates.Default);
     setIsLoading(initialState);
-  };
+  }
 
-  async function deleteElement () {
+  async function visualiseDeleting () {
     setIsLoading({loadingAdd: false, loadingDel: true, loadingClear: false});
-    const arr = stack.getContainer();
-    changeColor(arr, stack.getSize() -1, ElementStates.Changing);
-    await timeout(SHORT_DELAY_IN_MS);
-    stack.pop();
-    setStackState(arr);
+    await deleteElement(myStack, setStackState);
     setIsLoading(initialState);
   }
 
-  function clearStack () {
-    stack.clear();
-    setStackState([]);
-  }
+
 
   return (
     <SolutionLayout title="Стек">
       <div className={styles.container}>
         <div className={styles.controls}>
           <Input isLimitText maxLength={4} value={value} onChange={onChange} />
-          <Button text="Добавить" isLoader={isLoading.loadingAdd} disabled={!value || isLoading.loadingDel || isLoading.loadingClear} onClick={() => addElement(value)} />
-          <Button text="Удалить" isLoader={isLoading.loadingDel} disabled={!stackState.length || isLoading.loadingAdd || isLoading.loadingClear} onClick={deleteElement}/>
+          <Button
+            text="Добавить"
+            isLoader={isLoading.loadingAdd}
+            disabled={!value || isLoading.loadingDel || isLoading.loadingClear}
+            onClick={() => visualiseAdding(value)}
+          />
+          <Button
+            text="Удалить"
+            isLoader={isLoading.loadingDel}
+            disabled={
+              !stackState.length || isLoading.loadingAdd || isLoading.loadingClear
+            }
+            onClick={visualiseDeleting}
+          />
         </div>
-        <Button text="Очистить"  isLoader={isLoading.loadingClear} disabled={!stackState.length || isLoading.loadingAdd===true || isLoading.loadingDel} onClick={clearStack}/>
+        <Button
+          text="Очистить"
+          isLoader={isLoading.loadingClear}
+          disabled={
+            !stackState.length || isLoading.loadingAdd || isLoading.loadingDel
+          }
+          onClick={() => clearStack(myStack, setStackState)}
+        />
       </div>
       <ul className={styles.stackList}>
         {stackState &&
@@ -87,7 +89,7 @@ export const StackPage: React.FC = () => {
               letter={item.item}
               key={index}
               index={index}
-              head={index === stack.getSize()-1 ? 'top' : undefined}
+              head={index === myStack.getSize() - 1 ? "top" : undefined}
               state={item.state}
             />
           ))}

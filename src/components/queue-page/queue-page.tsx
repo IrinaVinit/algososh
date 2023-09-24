@@ -9,10 +9,12 @@ import { Queue } from "./Queue";
 import { timeout } from "../../utils/utils";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 
+
 export type CircleElement = {
   item: string;
   state: ElementStates;
 };
+
 type ActiveElement = {
   loadingAdd: boolean;
   loadingDel: boolean;
@@ -32,7 +34,6 @@ export const QueuePage: React.FC = () => {
   const [isQueue, setIsQueue] = useState<boolean>(false);
 
   const queue = useMemo(() => new Queue<string>(7), []);
-
   const length = queue.getQueue().length;
 
   function getInitualCircles() {
