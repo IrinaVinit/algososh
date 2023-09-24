@@ -16,6 +16,7 @@ export type CircleElement = {
   tail?: string | React.ReactElement | null;
   state: ElementStates;
 };
+
 type ActiveElement = {
   isLoading: boolean;
   loadingAddHead: boolean;

@@ -4,8 +4,7 @@ import styles from "./fibonacci-page.module.css";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-import { timeout } from "../../utils/utils";
-import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { visualise } from "./utils";
 
 type ActiveElementFib = {
   loading: boolean;
@@ -26,7 +25,7 @@ export const FibonacciPage: React.FC = () => {
   const [arrFib, setArrFib] = useState<string[]>([]);
 
   const onClick = () => {
-    visualise();
+    visualiseAlg();
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,26 +36,11 @@ export const FibonacciPage: React.FC = () => {
       setValue(e.target.value);
     }
   };
-  function fibIterative(n: number): number[] {
-    let arr: number[] = [1, 1];
-    for (let i = 2; i <= n; i++) {
-      arr.push(arr[i - 2] + arr[i - 1]);
-    }
 
-    return arr;
-  }
-
-  async function visualise() {
+  async function visualiseAlg() {
     setIsLoading({ loading: true, disaibledButton: true, disaibledInput: true });
     setValue('');
-    const arr = fibIterative(Number(value));
-    let res: string[] = [];
-    for (let i = 0; i <= arr.length - 1; i++) {
-      await timeout(SHORT_DELAY_IN_MS);
-      res.push(arr[i].toString());
-      setArrFib([...res]);
-    }
-
+    await visualise(Number(value), setArrFib);
     setIsLoading(initialStateActiveElement);
   }
 

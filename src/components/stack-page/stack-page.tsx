@@ -14,6 +14,7 @@ export type CircleElement = {
   item: string;
   state: ElementStates;
 };
+
 type ActiveElement = {
   loadingAdd: boolean;
   loadingDel: boolean;
