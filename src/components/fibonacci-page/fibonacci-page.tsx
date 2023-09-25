@@ -8,14 +8,14 @@ import { visualise } from "./utils";
 
 type ActiveElementFib = {
   loading: boolean;
-  disaibledInput: boolean;
-  disaibledButton: boolean;
+  disabledInput: boolean;
+  disabledButton: boolean;
 };
 
 const initialStateActiveElement = {
   loading: false,
-  disaibledInput: false,
-  disaibledButton: false,
+  disabledInput: false,
+  disabledButton: false,
 };
 
 
@@ -30,7 +30,7 @@ export const FibonacciPage: React.FC = () => {
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) > 19 || Number(e.target.value) < 0) {
-      setIsLoading({ loading: false, disaibledInput: false, disaibledButton: true });
+      setIsLoading({ loading: false, disabledInput: false, disabledButton: true });
     } else {
       setIsLoading(initialStateActiveElement);
       setValue(e.target.value);
@@ -38,7 +38,7 @@ export const FibonacciPage: React.FC = () => {
   };
 
   async function visualiseAlg() {
-    setIsLoading({ loading: true, disaibledButton: true, disaibledInput: true });
+    setIsLoading({ loading: true, disabledButton: true, disabledInput: true });
     setValue('');
     await visualise(Number(value), setArrFib);
     setIsLoading(initialStateActiveElement);
@@ -55,14 +55,14 @@ export const FibonacciPage: React.FC = () => {
           value={value}
           isLimitText
           onChange={onChange}
-          disabled={isLoading.disaibledInput}
+          disabled={isLoading.disabledInput}
         />
         <Button
           type="button"
           onClick={onClick}
           extraClass={styles.button}
           text="Рассчитать"
-          disabled={!value || isLoading.disaibledButton}
+          disabled={!value || isLoading.disabledButton}
           isLoader={isLoading.loading}
         />
       </div>

@@ -9,7 +9,7 @@ import { visualise } from "./utils";
 
 type ActiveElement = {
   loading: boolean;
-  disaibled: boolean;
+  disabled: boolean;
 };
 
 export type ReverseElement = {
@@ -19,7 +19,7 @@ export type ReverseElement = {
 
 const initialStateActiveElement = {
   loading: false,
-  disaibled: false,
+  disabled: false,
 };
 
 export const StringComponent: React.FC = () => {
@@ -36,7 +36,7 @@ export const StringComponent: React.FC = () => {
   };
 
   async function visualiseAlg(str: string) {
-    setIsLoading({ loading: true, disaibled: true });
+    setIsLoading({ loading: true, disabled: true });
     await visualise(str, setReverseArr, setValue);
     setIsLoading(initialStateActiveElement);
   }
@@ -50,7 +50,7 @@ export const StringComponent: React.FC = () => {
           maxLength={11}
           value={value}
           onChange={onChange}
-          disabled={isLoading.disaibled}
+          disabled={isLoading.disabled}
         />
         <Button
           type="button"

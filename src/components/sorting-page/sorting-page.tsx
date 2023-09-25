@@ -18,28 +18,28 @@ export type CircleElement = {
 type ActiveElementSort = {
   loadingDesc: boolean;
   loadingAsc: boolean;
-  disaibledRadio: boolean;
-  disaibledButton: boolean;
+  disabledRadio: boolean;
+  disabledButton: boolean;
 };
 
 const initialState = {
   loadingDesc: false,
   loadingAsc: false,
-  disaibledRadio: false,
-  disaibledButton: false,
+  disabledRadio: false,
+  disabledButton: false,
 };
 
 const visualStateDesc = {
   loadingDesc: true,
   loadingAsc: false,
-  disaibledRadio: true,
-  disaibledButton: true,
+  disabledRadio: true,
+  disabledButton: true,
 };
 const visualStateAsc = {
   loadingDesc: false,
   loadingAsc: true,
-  disaibledRadio: true,
-  disaibledButton: true,
+  disabledRadio: true,
+  disabledButton: true,
 };
 
 export const SortingPage: React.FC = () => {
@@ -72,14 +72,14 @@ export const SortingPage: React.FC = () => {
             label="Выбор"
             checked={sortingType === Sorting.Selection}
             onChange={() => setSortingType(Sorting.Selection)}
-            disabled={isLoading.disaibledRadio}
+            disabled={isLoading.disabledRadio}
           />
           <RadioInput
             value="bubbleSort"
             label="Пузырек"
             checked={sortingType === Sorting.BubbleSort}
             onChange={() => setSortingType(Sorting.BubbleSort)}
-            disabled={isLoading.disaibledRadio}
+            disabled={isLoading.disabledRadio}
           />
         </div>
         <div className={`${styles.flex} ${styles.buttons}`}>
@@ -88,7 +88,7 @@ export const SortingPage: React.FC = () => {
             sorting={Direction.Ascending}
             text="По возрастанию"
             onClick={visualiseSortInAscending}
-            disabled={!array.length || isLoading.disaibledButton}
+            disabled={!array.length || isLoading.disabledButton}
             isLoader={isLoading.loadingAsc}
           />
           <Button
@@ -96,7 +96,7 @@ export const SortingPage: React.FC = () => {
             sorting={Direction.Descending}
             text="По убыванию"
             onClick={visualiseSortInDescending}
-            disabled={!array.length || isLoading.disaibledButton}
+            disabled={!array.length || isLoading.disabledButton}
             isLoader={isLoading.loadingDesc}
           />
         </div>
@@ -106,7 +106,7 @@ export const SortingPage: React.FC = () => {
             extraClass={styles.button}
             onClick={getNewArr}
             type="button"
-            disabled={isLoading.disaibledButton}
+            disabled={isLoading.disabledButton}
           />
         </div>
       </div>

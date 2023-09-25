@@ -24,7 +24,7 @@ const initialState = {
 };
 
 export const StackPage: React.FC = () => {
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState("");
   const [isLoading, setIsLoading] = useState<ActiveElement>(initialState);
   const [stackState, setStackState] = useState<CircleElement[]>([]);
 
@@ -50,8 +50,6 @@ export const StackPage: React.FC = () => {
     await deleteElement(myStack, setStackState);
     setIsLoading(initialState);
   }
-
-
 
   return (
     <SolutionLayout title="Стек">
