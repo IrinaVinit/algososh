@@ -1,0 +1,35 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  align-items: center;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.container {
+  margin: 0 98px 48px;
+}
+.radioInputs {
+  gap: 40px;
+}
+
+.buttons {
+  gap: 12px;
+  justify-self: center;
+}
+.button {
+  width: 205px;
+  height: 60px;
+}
+.newAr {
+  justify-self: end;
+}
+.columns {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  justify-content: center;
+}
+
