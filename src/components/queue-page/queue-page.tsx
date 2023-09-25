@@ -32,7 +32,6 @@ export const QueuePage: React.FC = () => {
   const queue = useMemo(() => new Queue<string>(7), []);
   const length = queue.getQueue().length;
 
-  
   useEffect(() => {
     const arr = getInitualCircles(length);
     setQueueState(arr);
@@ -42,7 +41,6 @@ export const QueuePage: React.FC = () => {
     setValue(evt.target.value);
   };
 
-
   async function visualiseAddingValue(value: string) {
     setIsLoading({ loadingAdd: true, loadingClear: false, loadingDel: false });
     setIsQueue(true);
@@ -50,7 +48,7 @@ export const QueuePage: React.FC = () => {
     setValue("");
     setQueueState(queueState);
     await timeout(SHORT_DELAY_IN_MS);
-    changeColor(queueState, queue.getIndexTail(), ElementStates.Default)
+    changeColor(queueState, queue.getIndexTail(), ElementStates.Default);
     setQueueState(queueState);
     setIsLoading(initialState);
   }
@@ -59,7 +57,7 @@ export const QueuePage: React.FC = () => {
     setIsLoading({ loadingAdd: false, loadingClear: false, loadingDel: true });
     await deleteValue(queue, queueState, setQueueState);
     if (queue.isEmpty()) {
-      clearQueue()
+      clearQueue();
     }
     setQueueState(queueState);
     setIsLoading(initialState);
@@ -70,16 +68,21 @@ export const QueuePage: React.FC = () => {
     setIsQueue(false);
     queue.clear();
     setValue("");
-    setQueueState(()=>getInitualCircles(length));
+    setQueueState(() => getInitualCircles(length));
     setIsLoading(initialState);
   }
-
 
   return (
     <SolutionLayout title="Очередь">
       <div className={styles.container}>
         <div className={styles.controls}>
-          <Input isLimitText maxLength={4} value={value} onChange={onChange} placeholder="Введите значение"/>
+          <Input
+            isLimitText
+            maxLength={4}
+            value={value}
+            onChange={onChange}
+            placeholder="Введите значение"
+          />
           <Button
             text="Добавить"
             isLoader={isLoading.loadingAdd}
@@ -96,7 +99,7 @@ export const QueuePage: React.FC = () => {
         <Button
           text="Очистить"
           isLoader={isLoading.loadingClear}
-          disabled={!isQueue || isLoading.loadingAdd|| isLoading.loadingDel}
+          disabled={!isQueue || isLoading.loadingAdd || isLoading.loadingDel}
           onClick={clearQueue}
         />
       </div>
@@ -107,8 +110,8 @@ export const QueuePage: React.FC = () => {
               letter={item.item}
               key={index}
               index={index}
-              head={isQueue && index === queue.getIndexHead() ? "head" : ''}
-              tail={isQueue && index === queue.getIndexTail() ? "tail" : ''}
+              head={isQueue && index === queue.getIndexHead() ? "head" : ""}
+              tail={isQueue && index === queue.getIndexTail() ? "tail" : ""}
               state={item.state}
             />
           ))}

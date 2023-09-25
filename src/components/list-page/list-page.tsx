@@ -7,15 +7,16 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { LinkedList } from "./LinkedList";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
-import { timeout } from "../../utils/utils";
-import { DELAY_IN_MS } from "../../constants/delays";
-
-export type CircleElement = {
-  item: string;
-  head?: string | React.ReactElement | null;
-  tail?: string | React.ReactElement | null;
-  state: ElementStates;
-};
+import { CircleElement } from "../../types/common-types";
+import {
+  addElementByIndex,
+  addElementToHead,
+  addElementToTail,
+  getCircle,
+  removeElementByIndex,
+  removeElementFromHead,
+  removeElementFromTail,
+} from "./utils";
 
 type ActiveElement = {
   isLoading: boolean;
@@ -45,32 +46,19 @@ export const ListPage: React.FC = () => {
 
   const linkList = useMemo(() => new LinkedList<string>(), []);
   const initialArray = ["c", "o", "o", "l"];
- 
+  const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
+
   const buttonDeleteDisaibled = !linkList.getSize() || isLoading.isLoading;
   const buttonByIndexDisaibled =
-    !index || Number(index) < 0 || linkList.getSize()-1 < Number(index);
+    !index || Number(index) < 0 || linkList.getSize() - 1 < Number(index);
   const buttonAddHeadTailDisaibled =
     !value || isLoading.isLoading || linkList.getSize() > 8;
 
-
-  function getCircle(value: string, index: number, head?: React.ReactElement<CircleElement>, tail?: React.ReactElement<CircleElement>) {
-   
-    const tailText = index === linkList.getSize() - 1 ? "tail" : "";
-    const headText = index === 0 ? "head" : "";
-
-    const circleItem = {
-      item: value,
-      index: index,
-      head: head ?? headText,
-      tail: tail ?? tailText,
-      state: ElementStates.Default,
-    };
-    return circleItem;
-  }
-
   useEffect(() => {
     linkList.appendArray(initialArray);
-    const initialList = initialArray.map((item, index) => getCircle(item, index));
+    const initialList = initialArray.map((item, index) =>
+      getCircle(linkList, item, index)
+    );
     setListState(initialList);
   }, []);
 
@@ -81,7 +69,7 @@ export const ListPage: React.FC = () => {
     setIndex(evt.target.value);
   };
 
-  async function addElementToHead(value: string) {
+  async function visualiseAddingElementToHead() {
     setIsLoading({
       isLoading: true,
       loadingAddHead: true,
@@ -93,42 +81,11 @@ export const ListPage: React.FC = () => {
     });
     setValue("");
     setIndex("");
-    linkList.appendToIndex(value, 0);
-
-    const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
-    if(!listState.length) {
-      listState.unshift({
-        item: value,
-        head: "head",
-        tail: 'tail',
-        state: ElementStates.Modified,
-      });
-      setListState([...listState]);
-      await timeout(DELAY_IN_MS);
-      listState[0].state = ElementStates.Default;
-      setListState([...listState]);
-      setIsLoading(initialState);
-    } else {
-      listState[0].head = newCircle;
-      setListState(listState);
-  
-      await timeout(DELAY_IN_MS);
-      const headItem = linkList.getHead();
-      listState.unshift({
-        item: headItem!.value,
-        head: "head",
-        state: ElementStates.Modified,
-      });
-      listState[1].head = "";
-      setListState([...listState]);
-      await timeout(DELAY_IN_MS);
-      listState[0].state = ElementStates.Default;
-      setListState([...listState]);
-      setIsLoading(initialState);
-    }
+    await addElementToHead(linkList, value, 0, newCircle, listState, setListState);
+    setIsLoading(initialState);
   }
 
-  async function addElementToTail(value: string) {
+  async function visualiseAddingElementToTail() {
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -140,42 +97,11 @@ export const ListPage: React.FC = () => {
     });
     setValue("");
     setIndex("");
-
-    if(!listState.length) {
-      listState.unshift({
-        item: value,
-        head: "head",
-        tail: 'tail',
-        state: ElementStates.Modified,
-      });
-      setListState([...listState]);
-      await timeout(DELAY_IN_MS);
-      listState[0].state = ElementStates.Default;
-      setListState([...listState]);
-      setIsLoading(initialState);
-    } else {
-
-
-    const length = linkList.getSize() - 1;
-    linkList.appendToIndex(value, length);
-    const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
-
-    listState[length].head = newCircle;
-    setListState([...listState]);
-
-    await timeout(DELAY_IN_MS);
-   
-    listState.push({ item: value, head: "", tail: 'tail', state: ElementStates.Modified });
-    listState[length].head = "";
-    listState[length].tail = "";
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    listState[length + 1].state = ElementStates.Default;
-    setListState([...listState]);
+    await addElementToTail(linkList, value, newCircle, listState, setListState);
     setIsLoading(initialState);
   }
-  }
-  async function addElementByIndex(value: string, index: number) {
+
+  async function visualiseAddingElementByIndex(index: number) {
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -187,46 +113,11 @@ export const ListPage: React.FC = () => {
     });
     setValue("");
     setIndex("");
-    linkList.appendToIndex(value, index);
-    const newCircle = <Circle letter={value} state={ElementStates.Changing} isSmall />;
-
-    for (let i = 0; i <= index; i++) {
-      if (i === 1) {
-        listState[i - 1].head = "head";
-      }
-
-      if (i > 1) {
-        listState[i - 1].head = "";
-      }
-
-      listState[i] = {
-        ...listState[i],
-        state: ElementStates.Changing,
-        tail: '',
-        head: newCircle,
-      };
-
-      if (i === index) {
-        listState[i].state = ElementStates.Default
-      }
-      
-      setListState([...listState]);
-      await timeout(DELAY_IN_MS);
-    }
-    await timeout(DELAY_IN_MS);
-    listState.map((item) => (
-      item.state = ElementStates.Default)
-      );
-    listState.splice(index, 0, { item: value, head: "", state: ElementStates.Modified });
-    listState[index + 1].head = "";
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    listState[index].state = ElementStates.Default;
-    setListState([...listState]);
+    await addElementByIndex(linkList, value, index, newCircle, listState, setListState);
     setIsLoading(initialState);
   }
 
-  async function removeElementFromHead() {
+  async function visualiseRemovingElementFromHead() {
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -236,32 +127,11 @@ export const ListPage: React.FC = () => {
       loadingAddIndex: false,
       loadingRemoveIndex: false,
     });
-    linkList.deleteHead();
-    listState[0].state =  ElementStates.Changing;
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    const newCircle = <Circle letter={listState[0].item} state={ElementStates.Changing} isSmall />;
-
-    listState[0] = {
-      item: '',
-      head: 'head',
-      tail: newCircle,
-      state: ElementStates.Changing
-    };
-    
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    listState.shift();
-    if(listState.length) {
-      listState[0].head = 'head' } 
-
-    setListState([...listState]);
-   
+    await removeElementFromHead(linkList, newCircle, listState, setListState);
     setIsLoading(initialState);
   }
 
-
-  async function removeElementFromTail() {
+  async function visualiseRemovingElementFromTail() {
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -271,41 +141,20 @@ export const ListPage: React.FC = () => {
       loadingAddIndex: false,
       loadingRemoveIndex: false,
     });
-   
-    const length = linkList.getSize() - 1;
-    listState[length].state =  ElementStates.Changing;
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    const newCircle = <Circle letter={listState[length].item} state={ElementStates.Changing} isSmall />;
-
-    
-    listState[length] = {
-      item: '',
-      tail: newCircle,
-      state: ElementStates.Changing
-    };
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    linkList.deleteTail();
-    listState.pop();
-    if(listState.length) {
-      listState[length-1].tail = 'tail' } 
-
-    setListState([...listState]);
+    await removeElementFromTail(linkList, newCircle, listState, setListState);
     setIsLoading(initialState);
   }
 
-  async function removeElementByIndex(index: number) {
-    
-    if(index===0) {
-      removeElementFromHead();
-      return
+  async function visualiseRemovingElementByIndex(index: number) {
+    if (index === 0) {
+      visualiseRemovingElementFromHead();
+      return;
     }
-    if(index === listState.length-1) {
-      removeElementFromTail();
-      return
+    if (index === listState.length - 1) {
+      visualiseRemovingElementFromTail();
+      return;
     }
-    
+
     setIsLoading({
       isLoading: true,
       loadingAddHead: false,
@@ -316,37 +165,9 @@ export const ListPage: React.FC = () => {
       loadingRemoveIndex: true,
     });
     setIndex("");
-   
-    const newCircle = <Circle letter={listState[index].item} state={ElementStates.Changing} isSmall />;
-
-    for (let i = 0; i <= index; i++) {
-      listState[i].state = ElementStates.Changing 
-      setListState([...listState]);
-      await timeout(DELAY_IN_MS);
-    }
-
-    listState[index] = {
-      item: '',
-      tail: newCircle,
-      state: ElementStates.Changing
-    };
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-    
-    listState.splice(index, 1);
-    linkList.deleteByIndex(index);
-
-    setListState([...listState]);
-    await timeout(DELAY_IN_MS);
-
-    listState.map((item) => (
-      item.state = ElementStates.Default)
-      );
-
-    setListState([...listState]);
+    await removeElementByIndex(index, linkList, newCircle, listState, setListState);
     setIsLoading(initialState);
   }
-
 
   return (
     <SolutionLayout title="Связный список">
@@ -363,25 +184,25 @@ export const ListPage: React.FC = () => {
             text="Добавить в head"
             isLoader={isLoading.loadingAddHead}
             disabled={buttonAddHeadTailDisaibled}
-            onClick={() => addElementToHead(value)}
+            onClick={visualiseAddingElementToHead}
           />
           <Button
             text="Добавить в tail"
             isLoader={isLoading.loadingAddTail}
             disabled={buttonAddHeadTailDisaibled}
-            onClick={() => addElementToTail(value)}
+            onClick={visualiseAddingElementToTail}
           />
           <Button
             text="Удалить из head"
             isLoader={isLoading.loadingRemoveHead}
             disabled={buttonDeleteDisaibled}
-            onClick={removeElementFromHead}
+            onClick={visualiseRemovingElementFromHead}
           />
           <Button
             text="Удалить из tail"
             isLoader={isLoading.loadingRemoveTail}
             disabled={buttonDeleteDisaibled}
-            onClick={removeElementFromTail}
+            onClick={visualiseRemovingElementFromTail}
           />
           <Input
             type="number"
@@ -396,14 +217,14 @@ export const ListPage: React.FC = () => {
             isLoader={isLoading.loadingAddIndex}
             text="Добавить по индексу"
             disabled={buttonByIndexDisaibled}
-            onClick={() => addElementByIndex(value, Number(index))}
+            onClick={() => visualiseAddingElementByIndex(Number(index))}
           />
           <Button
             extraClass={styles.removeIndex}
             text="Удалить по индексу"
             isLoader={isLoading.loadingRemoveIndex}
             disabled={buttonByIndexDisaibled}
-            onClick={()=>removeElementByIndex(Number(index))}
+            onClick={() => visualiseRemovingElementByIndex(Number(index))}
           />
         </div>
         <ul className={styles.lineList}>
