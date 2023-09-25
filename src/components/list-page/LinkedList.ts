@@ -52,9 +52,7 @@ export class LinkedList<T> implements ILinkedList<T> {
           const currentTail = this.tail;
           currentTail.next = node;
           this.tail = node;
-         
         }
-       
       } else {
         let curr = this.head;
         let currIndex = 0;
@@ -66,7 +64,6 @@ export class LinkedList<T> implements ILinkedList<T> {
         curr!.next = node;
       }
       this.size++;
-    
     }
   }
   deleteHead() {
@@ -83,41 +80,40 @@ export class LinkedList<T> implements ILinkedList<T> {
     this.size--;
   }
 
-  deleteTail(){
-    if(!this.tail){
-        return
+  deleteTail() {
+    if (!this.tail) {
+      return;
     }
     if (this.head === this.tail) {
       this.head = null;
       this.tail = null;
     } else {
-    let curr = this.tail;
-    let prev = curr;
-    prev.next = null;
-    this.size--;
+      let curr = this.tail;
+      let prev = curr;
+      prev.next = null;
+      this.size--;
     }
-}
+  }
 
-deleteByIndex(index:number) {
-  if(index >= this.size){
-    return
+  deleteByIndex(index: number) {
+    if (index >= this.size) {
+      return;
+    }
+    if (index === 0) {
+      this.deleteHead();
+      return;
+    }
+    if (index === this.size - 1) {
+      this.deleteTail();
+      return;
+    }
+    let curr = this.head;
+    for (let i = 1; i < index; i++) {
+      curr = curr!.next;
+    }
+    curr!.next = curr!.next!.next;
+    this.size--;
   }
-  if(index === 0){
-    this.deleteHead()
-    return
-  }
-  if(index === this.size-1){
-    this.deleteTail()
-    return
-  }
-  let curr = this.head
-    for(let i = 1; i < index; i++){
-    curr= curr!.next
-  }
-    curr!.next = curr!.next!.next
-    this.size--
-}
-
 
   getHead() {
     return this.head;
